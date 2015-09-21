@@ -5,6 +5,7 @@ import java.util.Properties;
 import javax.sql.DataSource;
 
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
@@ -13,6 +14,7 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 
 @Configuration
+@ComponentScan(basePackages = "cc.blog")
 public class DataSourceConfig {
 
 	@Bean
@@ -38,7 +40,7 @@ public class DataSourceConfig {
 	}
 
 	@Bean
-	PersistenceExceptionTranslationPostProcessor persistenceExceptionTranslationPostProcesso() {
+	public PersistenceExceptionTranslationPostProcessor persistenceExceptionTranslationPostProcesso() {
 		return new PersistenceExceptionTranslationPostProcessor();
 	}
 
@@ -54,10 +56,9 @@ public class DataSourceConfig {
 
 		LocalContainerEntityManagerFactoryBean entityManagerFactory = new LocalContainerEntityManagerFactoryBean();
 		entityManagerFactory.setDataSource(dataSource());
-		entityManagerFactory.setPackagesToScan("cc.blog.model"); // @Entity 탐색
-																	// 시작 위치
+		entityManagerFactory.setPackagesToScan("cc.blog.model"); // @Entity 탐색 시작 위치
 		entityManagerFactory.setJpaVendorAdapter(hibernateJpaVendorAdapter());
 		entityManagerFactory.setJpaProperties(jpaProperties);
-		return null;
+		return entityManagerFactory;
 	}
 }
