@@ -1,5 +1,7 @@
 package cc.blog.repository;
 
+import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
@@ -12,16 +14,20 @@ public class MemberRepository {
 
 	@PersistenceContext
 	private EntityManager em;
-
-	public Member findById(Long id) {
+	
+	public void save(final Member member) {
+		em.persist(member);
+	}
+	
+	public Member findOne(final Long id) {
 		return em.find(Member.class, id);
 	}
-
-	public void save(Member member) {
-		if (member.getId() == null) {
-			this.em.persist(member);
-		} else {
-			this.em.merge(member);
-		}
+	
+	public List<Member> findAll() {
+		return em.createQuery("select m from Member m", Member.class).getResultList();
+	}
+	
+	public void remove(final Member member) {
+		em.remove(member);
 	}
 }
