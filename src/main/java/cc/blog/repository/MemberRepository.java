@@ -14,20 +14,20 @@ public class MemberRepository {
 
 	@PersistenceContext
 	private EntityManager em;
-	
+
 	public void save(final Member member) {
 		em.persist(member);
 	}
-	
+
 	public Member findOne(final Long id) {
 		return em.find(Member.class, id);
 	}
-	
+
 	public List<Member> findAll() {
 		return em.createQuery("select m from Member m", Member.class).getResultList();
 	}
-	
-	public void remove(final Member member) {
-		em.remove(member);
+
+	public void remove(final Long id) {
+		em.remove(findOne(id));
 	}
 }
