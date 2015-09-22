@@ -22,6 +22,10 @@ public class PostRepository {
 	public Post findOne(Long id) {
 		return em.find(Post.class, id);
 	}
+	
+	public void update(final Post post) {
+		em.merge(post);
+	}
 
 	public List<Post> findAll() {
 		return em.createQuery("select p from Post p", Post.class).getResultList();

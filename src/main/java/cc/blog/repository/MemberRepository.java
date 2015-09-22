@@ -22,6 +22,10 @@ public class MemberRepository {
 	public Member findOne(final Long id) {
 		return em.find(Member.class, id);
 	}
+	
+	public void update(final Member member) {
+		em.merge(member);
+	}
 
 	public List<Member> findAll() {
 		return em.createQuery("select m from Member m", Member.class).getResultList();
