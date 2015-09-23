@@ -47,12 +47,12 @@ public class DataSourceConfig {
 	@Bean
 	public LocalContainerEntityManagerFactoryBean entityManagerFactory() throws Exception {
 		Properties jpaProperties = new Properties();
-		jpaProperties.setProperty("hibernate.dialect", "org.hibernate.dialect.H2Dialect");
-		jpaProperties.setProperty("hibernate.show_sql", "true");
-		jpaProperties.setProperty("hibernate.format_sql", "true");
-		jpaProperties.setProperty("hibernate.use_sql_comments", "true");
-		jpaProperties.setProperty("hibernate.id.new_generator_mappings", "true");
-		jpaProperties.setProperty("hibernate.hbm2ddl.auto", "create");
+		jpaProperties.put("hibernate.dialect", "org.hibernate.dialect.H2Dialect");
+		jpaProperties.put("hibernate.show_sql", "true");
+		jpaProperties.put("hibernate.format_sql", "true");
+		jpaProperties.put("hibernate.use_sql_comments", "true");
+		jpaProperties.put("hibernate.id.new_generator_mappings", "true");
+		jpaProperties.put("hibernate.hbm2ddl.auto", "update");
 
 		LocalContainerEntityManagerFactoryBean entityManagerFactory = new LocalContainerEntityManagerFactoryBean();
 		entityManagerFactory.setDataSource(dataSource());

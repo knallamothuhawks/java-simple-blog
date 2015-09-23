@@ -1,5 +1,6 @@
 package cc.blog.service;
 
+import java.util.Calendar;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +16,23 @@ public class MemberService {
 	private MemberRepository repository;
 	
 	public Long addMember(final Member member) {
+		member.setCreatedDate(Calendar.getInstance().getTime());
 		repository.save(member);
 		return member.getId();
+	}
+	
+	public void updateMember(final Member updateMember) {
+		if (updateMember == null || updateMember.getId() == null) {
+			throw new IllegalStateException("Invalid Member entity.");
+		}
+		
+		Member existMember = findMemberById(updateMember.getId());
+		if (existMember == null) {
+			throw new IllegalStateException("Member entity not found, memberId: " + updateMember.getId());
+		}
+		
+		updateMember.setCreatedDate(existMember.getCreatedDate());
+		repository.update(updateMember);
 	}
 	
 	public Member findMemberById(final Long memberId) {
