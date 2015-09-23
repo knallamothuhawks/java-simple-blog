@@ -1,4 +1,4 @@
-package cc.blog.config;
+package cc.blog.test.config;
 
 import java.util.Properties;
 
@@ -21,7 +21,7 @@ public class DataSourceConfig {
 	public DataSource dataSource() throws Exception {
 		DriverManagerDataSource dataSource = new DriverManagerDataSource();
 		dataSource.setDriverClassName("org.h2.Driver");
-		dataSource.setUrl("jdbc:h2:tcp://192.168.100.194/~/testblog");
+		dataSource.setUrl("jdbc:h2:tcp://localhost/~/testblog");
 		dataSource.setUsername("sa");
 		dataSource.setPassword("");
 		return dataSource;
@@ -52,7 +52,7 @@ public class DataSourceConfig {
 		jpaProperties.put("hibernate.format_sql", "true");
 		jpaProperties.put("hibernate.use_sql_comments", "true");
 		jpaProperties.put("hibernate.id.new_generator_mappings", "true");
-		jpaProperties.put("hibernate.hbm2ddl.auto", "update");
+		jpaProperties.put("hibernate.hbm2ddl.auto", "create");
 
 		LocalContainerEntityManagerFactoryBean entityManagerFactory = new LocalContainerEntityManagerFactoryBean();
 		entityManagerFactory.setDataSource(dataSource());

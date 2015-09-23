@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import cc.blog.model.Member;
+import cc.blog.model.MemberRoleType;
 import cc.blog.repository.MemberRepository;
 
 @Service
@@ -17,6 +18,10 @@ public class MemberService {
 	
 	public Long addMember(final Member member) {
 		member.setCreatedDate(Calendar.getInstance().getTime());
+		if (member.getRole() == null) {
+			member.setRole(MemberRoleType.GENERAL);
+		}
+		
 		repository.save(member);
 		return member.getId();
 	}
