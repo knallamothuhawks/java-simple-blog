@@ -16,8 +16,12 @@ import cc.blog.service.MemberService;
 @RestController
 public class MemberController {
 
-	@Autowired
 	private MemberService service;
+	
+	@Autowired
+	public MemberController(MemberService service) {
+		this.service = service;
+	}
 	
 	@RequestMapping(value="/member", method=RequestMethod.POST)
 	public Long addMember(Member member) {
