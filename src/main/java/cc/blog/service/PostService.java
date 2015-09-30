@@ -1,6 +1,5 @@
 package cc.blog.service;
 
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -17,11 +16,10 @@ public class PostService {
 	private PostRepository repository;
 	
 	public Long addPost(final Post post) {
-		final Date currentDate = Calendar.getInstance().getTime();
+		final Date currentDate = new Date();
 		post.setCreatedDate(currentDate);
 		post.setLastModifiedDate(currentDate);
-		repository.save(post);
-		return post.getId();
+		return repository.save(post).getId();
 	}
 	
 	public void updatePost(final Post updatePost) {
@@ -35,9 +33,9 @@ public class PostService {
 		}
 		
 		updatePost.setCreatedDate(existPost.getCreatedDate());
-		updatePost.setLastModifiedDate(Calendar.getInstance().getTime());
+		updatePost.setLastModifiedDate(new Date());
 		
-		repository.update(updatePost);
+		repository.save(updatePost);
 	}
 	
 	public Post findPostById(final Long postId) {
@@ -45,7 +43,7 @@ public class PostService {
 	}
 	
 	public void removePostById(final Long postId) {
-		repository.remove(postId);
+		repository.delete(postId);
 	}
 	
 	public List<Post> findAllPosts() {

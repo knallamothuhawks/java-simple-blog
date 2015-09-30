@@ -2,7 +2,12 @@ package cc.blog.web;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -10,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import cc.blog.model.Member;
+import cc.blog.model.MemberDto;
 import cc.blog.service.MemberService;
 
 
@@ -24,8 +30,14 @@ public class MemberController {
 	}
 	
 	@RequestMapping(value="/member", method=RequestMethod.POST)
-	public Long addMember(Member member) {
-		return service.addMember(member);
+	public ResponseEntity addMember(@RequestBody @Valid MemberDto.Create dto, BindingResult result) {
+		
+		if (result.hasErrors()) {
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}
+		
+		Member newMember = service.addMember(dto);
+		return new ResponseEntity<>(newMember, HttpStatus.CREATED);
 	}
 	
 	@RequestMapping(value="/member", method=RequestMethod.PUT)
