@@ -28,7 +28,7 @@ public class PostService {
 		return repository.save(post);
 	}
 	
-	public void updatePost(final Post updatePost) {
+	public Post updatePost(final Post updatePost) {
 		if (updatePost == null || updatePost.getId() == null) {
 			throw new IllegalStateException("Invalid Post entity.");
 		}
@@ -41,7 +41,7 @@ public class PostService {
 		updatePost.setCreatedDate(existPost.getCreatedDate());
 		updatePost.setLastModifiedDate(new Date());
 		
-		repository.save(updatePost);
+		return repository.save(updatePost);
 	}
 	
 	public Post findPostById(final Long postId) {
