@@ -50,6 +50,7 @@ public class MemberController {
 	}
 
 	@RequestMapping(value = "/member/{memberId}", method = RequestMethod.GET)
+	@ResponseStatus(HttpStatus.OK)
 	public Member viewMember(@PathVariable(value = "memberId") Long memberId) throws MemberNotFoundException {
 		return service.findMemberById(memberId);
 	}
@@ -61,6 +62,7 @@ public class MemberController {
 	}
 
 	@RequestMapping(value = "/members", method = RequestMethod.GET)
+	@ResponseStatus(HttpStatus.OK)
 	public List<Member> listMembers() {
 		return service.findAllMembers();
 	}

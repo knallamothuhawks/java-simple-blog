@@ -3,10 +3,12 @@ package cc.blog.service;
 import java.util.Date;
 import java.util.List;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import cc.blog.model.Post;
+import cc.blog.model.PostDto;
 import cc.blog.repository.PostRepository;
 
 @Service
@@ -15,11 +17,15 @@ public class PostService {
 	@Autowired
 	private PostRepository repository;
 	
-	public Long addPost(final Post post) {
+	@Autowired
+	private ModelMapper modelMapper;
+	
+	public Post addPost(final PostDto.Create postDto) {
+		Post post = modelMapper.map(postDto, Post.class);
 		final Date currentDate = new Date();
 		post.setCreatedDate(currentDate);
 		post.setLastModifiedDate(currentDate);
-		return repository.save(post).getId();
+		return repository.save(post);
 	}
 	
 	public void updatePost(final Post updatePost) {
