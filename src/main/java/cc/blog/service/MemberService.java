@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import cc.blog.model.Member;
 import cc.blog.model.MemberDto;
+import cc.blog.model.MemberNotFoundException;
 import cc.blog.model.MemberRoleType;
 import cc.blog.repository.MemberRepository;
 
@@ -33,22 +34,23 @@ public class MemberService {
 		return repository.save(member);
 	}
 	
-	public void updateMember(final Member updateMember) {
+	public Member updateMember(final Member updateMember) throws MemberNotFoundException {
 		if (updateMember == null || updateMember.getId() == null) {
-			throw new IllegalStateException("Invalid Member entity.");
+			throw new MemberNotFoundException(updateMember.getId());
 		}
 		
 		Member existMember = findMemberById(updateMember.getId());
-		if (existMember == null) {
-			throw new IllegalStateException("Member entity not found, memberId: " + updateMember.getId());
-		}
-		
 		updateMember.setCreatedDate(existMember.getCreatedDate());
-		repository.save(updateMember);
+		return repository.save(updateMember);
 	}
 	
-	public Member findMemberById(final Long memberId) {
-		return repository.findOne(memberId);
+	public Member findMemberById(final Long memberId) throws MemberNotFoundException {
+		Member member = repository.findOne(memberId);
+		if (member == null) {
+			throw new MemberNotFoundException(memberId);
+		}
+		
+		return member;
 	}
 	
 	public void removeMemberById(final Long memberId) {
