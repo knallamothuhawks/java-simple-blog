@@ -1,0 +1,19 @@
+<div ng-controller="createUserCtrl">
+	<div style="padding: 5px;">
+		<span>이름 : </span>
+		<input type="text" ng-model="user.name">
+	</div>
+	<div style="padding: 5px;">
+		<span>비밀번호 : </span>
+		<input type="password" ng-model="user.password">
+	</div>
+	<div style="padding: 5px;">
+		<span>이메일 : </span>
+		<input type="email" ng-model="user.email">
+	</div>
+	<div style="padding: 5px;">
+		<button ng-click="userSave(user)">저장</button>
+		<button ng-click="reset()">취소</button>
+		<span ng-show="check">저장 되었습니다.</span>
+	</div>
+</div>

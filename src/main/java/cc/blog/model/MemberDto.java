@@ -17,15 +17,15 @@ public class MemberDto {
 	@NoArgsConstructor
 	public static class Create {
 		@NotBlank
-		@Size(min = 5)
+		@Size(min = 3)
 		private String name;
 		
 		@NotBlank
-		@Size(min = 5)
+		@Size(min = 3)
 		private String password;
 		
 		@NotBlank
-		@Size(min = 5)
+		@Size(min = 3)
 		private String email;
 	}
 	

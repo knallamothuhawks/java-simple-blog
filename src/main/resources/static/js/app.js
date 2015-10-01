@@ -13,8 +13,8 @@ app.config(function($routeProvider) {
 		controller: "boardListBoardCtrl"
 	})
 	.when("/insert", {
-		templateUrl: "views/inputContents.html",
-		controller: "inputContentsCtrl"
+		templateUrl: "views/createUser.html",
+		controller: "createUserCtrl"
 	})
 	.when("/write", {
 		templateUrl: "views/writeBoard.html",
@@ -23,10 +23,6 @@ app.config(function($routeProvider) {
 });
 
 app.controller("userListBoardCtrl", ["$scope", "$http", "uiGridConstants", function($scope, $http, uiGridConstants) {
-	var myData = [
-	              {id: "1", name : "김대용", password : "1234", createdDate : "2015-09-20", role : "ADMIN"}
-    ];
-
 	$scope.gridOptions = {
 			enableRowSelection: true, 
 			multiSelect : false,
@@ -44,18 +40,19 @@ app.controller("userListBoardCtrl", ["$scope", "$http", "uiGridConstants", funct
 		            $scope.mySelections = gridApi.selection.getSelectedRows();
 		        });
 		    },
-			data : myData
 	}
 	
-	console.log($scope.gridOptions)
-
+	var reqPromise = $http({
+		method : "GET",
+		url : "/members",
+	});
+	
+	reqPromise.success(function(data, status, headers, config){
+		$scope.gridOptions.data = data.content;
+	});
 }])
 
 app.controller("boardListBoardCtrl", ["$scope", "$http", "uiGridConstants", function($scope, $http, uiGridConstants) {
-	var myData = [
-	              {id: "1", title : "게시물 1", contents : "contents", createdDate : "2015-09-20", lastModifiedDate : "2015-09-20", member : "김대용"}
-    ];
-
 	$scope.gridOptions = {
 			enableRowSelection: true, 
 			multiSelect : false,
@@ -74,38 +71,24 @@ app.controller("boardListBoardCtrl", ["$scope", "$http", "uiGridConstants", func
 		            $scope.mySelections = gridApi.selection.getSelectedRows();
 		        });
 		    },
-			data : myData
 	}
-
+	
+	var reqPromise = $http({
+		method : "GET",
+		url : "/posts",
+	});
+	
+	reqPromise.success(function(data, status, headers, config){
+		$scope.gridOptions.data = data.content;
+	});
 }]);
 
-app.controller("inputContentsCtrl", ["$scope", "$http", function($scope, $http){
-	var date = new Date();
-	var yearsList = [];
-	var monthList = [];
-	var dayList = [];
-	
-	for ( var i = 1950; i < date.getFullYear() + 1; i++) {
-		yearsList.push(i);
-	}
-	
-	for ( var i = 1; i < 13; i++) {
-		monthList.push(i);
-	}
-	
-	for ( var i = 1; i < 32; i++) {
-		dayList.push(i);
-	}
-	
-	$scope.yearsList = yearsList;
-	$scope.monthList = monthList;
-	$scope.dayList = dayList;
-	
+app.controller("createUserCtrl", ["$scope", "$http", function($scope, $http){
 	$scope.userSave = function(user) {
 		var reqPromise = $http({
-			mehtod : "POST",
-			params : user,
-			url : "/userSave",
+			method : "POST",
+			data : user,
+			url : "/member",
 		});
 		
 		reqPromise.success(function(data, status, headers, config){
@@ -122,9 +105,9 @@ app.controller("inputContentsCtrl", ["$scope", "$http", function($scope, $http){
 app.controller("writeBoardCtrl", ["$scope", "$http", function($scope, $http){
 	$scope.boardSave = function(board) {
 		var reqPromise = $http({
-			mehtod : "POST",
-			params : board,
-			url : "/boardSave",
+			method : "POST",
+			data : board,
+			url : "/post",
 		});
 		
 		reqPromise.success(function(data, status, headers, config){
