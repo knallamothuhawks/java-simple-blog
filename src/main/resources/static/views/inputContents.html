@@ -1,0 +1,27 @@
+<div ng-controller="inputContentsCtrl">
+	<div style="padding: 5px;">
+		<span>이름 : </span>
+		<input type="text" ng-model="user.userName">
+	</div>
+	<div style="padding: 5px;">
+		<span>생년 월일 : </span>
+		<select ng-model="user.year" ng-options="year for year in yearsList">
+			<option value="">선택</option>
+		</select>
+		<select ng-model="user.month" ng-options="month for month in monthList">
+			<option value="">선택</option>
+		</select>
+		<select ng-model="user.day" ng-options="day for day in dayList">
+			<option value="">선택</option>
+		</select>
+	</div>
+	<div style="padding: 5px;">
+		<span>비밀번호 : </span>
+		<input type="password" ng-model="user.password">
+	</div>
+	<div style="padding: 5px;">
+		<button ng-click="userSave(user)">저장</button>
+		<button ng-click="reset()">취소</button>
+		<span ng-show="check">저장 되었습니다.</span>
+	</div>
+</div>
