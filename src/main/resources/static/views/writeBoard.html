@@ -1,0 +1,17 @@
+<div ng-controller="writeBoardCtrl">
+	<div>
+		<span>제목</span>
+		<input type="text" style="width:400px" ng-model="board.title">
+	</div>
+	
+	<div>
+		<span>내용</span>
+		<textarea rows="10" cols="100" ng-model="board.contents"></textarea>
+	</div>
+	
+	<div>
+		<button ng-click="boardSave(board)">저장</button>
+		<button ng-click="reset()">취소</button>
+		<span ng-show="check">저장 되었습니다.</span>
+	</div>
+</div>
