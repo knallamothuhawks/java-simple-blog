@@ -97,4 +97,11 @@ public class MemberControllerTests {
 		result.andDo(print());
 		result.andExpect(status().isOk());
 	}
+	
+	@Test
+	public void testGetMemberPage() throws Exception {
+		ResultActions result = mockMvc.perform(get("/members"));
+		result.andDo(print());
+		result.andExpect(status().isOk());
+	}
 }

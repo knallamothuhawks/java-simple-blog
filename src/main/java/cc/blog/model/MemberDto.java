@@ -1,5 +1,7 @@
 package cc.blog.model;
 
+import java.util.Date;
+
 import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.NotBlank;
@@ -32,6 +34,7 @@ public class MemberDto {
 		private Long id;
 		private String name;
 		private String email;
+		private Date createdDate;
 		private MemberRoleType role;
 	}
 }

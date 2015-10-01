@@ -1,11 +1,15 @@
 package cc.blog.web;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -63,8 +67,11 @@ public class MemberController {
 
 	@RequestMapping(value = "/members", method = RequestMethod.GET)
 	@ResponseStatus(HttpStatus.OK)
-	public List<Member> listMembers() {
-		return service.findAllMembers();
+	public PageImpl<MemberDto.Response> getMembers(Pageable pageable) {
+		Page<Member> page = service.findAllMembers(pageable);
+		List<MemberDto.Response> members = page.getContent().stream()
+				.map(member -> modelMapper.map(member, MemberDto.Response.class)).collect(Collectors.toList());
+		return new PageImpl<>(members, pageable, page.getTotalElements());
 	}
 
 	@ExceptionHandler(MemberNotFoundException.class)
