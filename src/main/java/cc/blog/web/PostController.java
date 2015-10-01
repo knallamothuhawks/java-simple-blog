@@ -64,9 +64,10 @@ public class PostController {
 
 	@RequestMapping(value = "/posts", method = RequestMethod.GET)
 	@ResponseStatus(value = HttpStatus.OK)
-	public PageImpl<Post> listPosts(Pageable pageable) {
+	public PageImpl<PostDto.Response> listPosts(Pageable pageable) {
 		Page<Post> page = service.findAllPosts(pageable);
-		List<Post> posts = page.getContent().stream().collect(Collectors.toList());
+		List<PostDto.Response> posts = page.getContent().stream()
+				.map(post -> modelMapper.map(post, PostDto.Response.class)).collect(Collectors.toList());
 		return new PageImpl<>(posts, pageable, page.getTotalElements());
 	}
 }

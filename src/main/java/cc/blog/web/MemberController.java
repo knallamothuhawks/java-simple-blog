@@ -40,7 +40,7 @@ public class MemberController {
 	public ResponseEntity<?> addMember(@RequestBody @Valid MemberDto.Create dto, BindingResult result) {
 
 		if (result.hasErrors()) {
-			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>(result.toString(), HttpStatus.BAD_REQUEST);
 		}
 
 		Member newMember = service.addMember(dto);

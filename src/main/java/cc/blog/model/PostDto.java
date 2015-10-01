@@ -37,6 +37,7 @@ public class PostDto {
 		private String title;
 		private String content;
 		private Date createdDate;
+		private Set<String> tags;
 	}
 	
 	@Data
