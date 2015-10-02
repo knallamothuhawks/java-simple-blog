@@ -14,9 +14,11 @@ import cc.blog.model.MemberDto;
 import cc.blog.model.MemberNotFoundException;
 import cc.blog.model.MemberRoleType;
 import cc.blog.repository.MemberRepository;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Transactional
+@Slf4j
 public class MemberService {
 
 	@Autowired
@@ -48,6 +50,7 @@ public class MemberService {
 	public Member findMemberById(final Long memberId) throws MemberNotFoundException {
 		Member member = repository.findOne(memberId);
 		if (member == null) {
+			log.error("Member entity not found. memberId: {}", memberId);
 			throw new MemberNotFoundException(memberId);
 		}
 

@@ -60,6 +60,13 @@ public class MemberControllerTests {
 		
 		result.andDo(print());
 		result.andExpect(status().isCreated());
+		
+		MemberDto.Create brokenDto = new MemberDto.Create("user1", "p", "meil");
+		result = mockMvc.perform(post("/member").contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(brokenDto)));
+		
+		result.andDo(print());
+		result.andExpect(status().isBadRequest());
 	}
 	
 	@Test
