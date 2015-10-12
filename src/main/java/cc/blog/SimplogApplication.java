@@ -56,10 +56,12 @@ public class SimplogApplication {
 	}
 
 	@Bean
+	// Spring framework에서 jpa를 사용하기 위해 선언 : spring framework가 제공하는 방식으로 엔티티 매니저 팩토리 등록
+	// j2se 환경에서는 persistence.xml에 설정
 	public LocalContainerEntityManagerFactoryBean entityManagerFactory() throws Exception {
 		Properties jpaProperties = new Properties();
 		jpaProperties.put("hibernate.dialect", "org.hibernate.dialect.H2Dialect");
-		jpaProperties.put("hibernate.show_sql", "true");
+		jpaProperties.put("hibernate.show_sql", "true"); // 콘솔에 로깅, logger를 통하려면 false로 설정
 		jpaProperties.put("hibernate.format_sql", "true");
 		jpaProperties.put("hibernate.use_sql_comments", "true");
 		jpaProperties.put("hibernate.id.new_generator_mappings", "true");
