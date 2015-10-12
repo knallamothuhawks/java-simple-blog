@@ -6,6 +6,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,10 +27,15 @@ public class MemberService {
 
 	@Autowired
 	private ModelMapper modelMapper;
+	
+	@Autowired
+	private PasswordEncoder passwordEncoder;
 
 	public Member addMember(final MemberDto.Create dto) {
 		Member member = modelMapper.map(dto, Member.class);
 		member.setCreatedDate(new Date());
+		member.setPassword(passwordEncoder.encode(member.getPassword()));
+		
 		if (member.getRole() == null) {
 			member.setRole(MemberRoleType.GENERAL);
 		}
@@ -44,6 +50,8 @@ public class MemberService {
 
 		Member existMember = findMemberById(updateMember.getId());
 		updateMember.setCreatedDate(existMember.getCreatedDate());
+		updateMember.setPassword(passwordEncoder.encode(updateMember.getPassword()));
+		
 		return repository.save(updateMember);
 	}
 

@@ -6,4 +6,6 @@ import cc.blog.model.Member;
 
 public interface MemberRepository extends JpaRepository<Member, Long>{
 
+	Member findByName(String name);
+
 }

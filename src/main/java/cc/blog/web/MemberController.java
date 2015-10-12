@@ -44,7 +44,7 @@ public class MemberController {
 		}
 
 		Member newMember = service.addMember(dto);
-		return new ResponseEntity<>(newMember, HttpStatus.CREATED);
+		return new ResponseEntity<>(modelMapper.map(newMember, MemberDto.Response.class), HttpStatus.CREATED);
 	}
 
 	@RequestMapping(value = "/member", method = RequestMethod.PUT)
