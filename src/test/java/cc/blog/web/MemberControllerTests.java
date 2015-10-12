@@ -15,6 +15,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.http.MediaType;
+import org.springframework.security.web.FilterChainProxy;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
@@ -24,14 +25,16 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
 
+import cc.blog.config.WebSecurityConfig;
 import cc.blog.model.Member;
 import cc.blog.model.MemberDto;
 import cc.blog.model.MemberRoleType;
 import cc.blog.service.MemberService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = TestConfig.class)
+@SpringApplicationConfiguration(classes = {TestConfig.class, WebSecurityConfig.class})
 @WebAppConfiguration
 @Transactional
 public class MemberControllerTests {
@@ -43,19 +46,25 @@ public class MemberControllerTests {
 
 	@Autowired
 	MemberService memberService;
+	
+	@Autowired
+    private FilterChainProxy springSecurityFilterChain;
 
 	MockMvc mockMvc;
 
 	@Before
 	public void setUp() {
-		mockMvc = MockMvcBuilders.webAppContextSetup(wac).build();
+		mockMvc = MockMvcBuilders.webAppContextSetup(wac)
+				.addFilter(springSecurityFilterChain)
+				.build();
 	}
 
 	@Test
 	public void testCreateMember() throws Exception {
 		MemberDto.Create createDto = new MemberDto.Create("username", "password!", "email@email.com");
 
-		ResultActions result = mockMvc.perform(post("/member").contentType(MediaType.APPLICATION_JSON)
+		ResultActions result = mockMvc.perform(post("/member")
+				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(createDto)));
 		
 		result.andDo(print());
@@ -70,9 +79,18 @@ public class MemberControllerTests {
 	}
 	
 	@Test
-	public void testFindMember() throws Exception {
+	public void tesgtFindMember() throws Exception {
+		MemberDto.Create createDto = new MemberDto.Create();
+		createDto.setEmail("email@eml.com");
+		createDto.setName("uname");
+		createDto.setPassword("password1");
+		memberService.addMember(createDto);
+		
+		
+		
 		Member member = memberService.addMember(new MemberDto.Create("username", "password!", "email@email.com"));
-		ResultActions result = mockMvc.perform(get("/member/" + member.getId()));
+		ResultActions result = mockMvc.perform(get("/member/" + member.getId())
+				.with(httpBasic(createDto.getName(), createDto.getPassword())));
 		
 		result.andDo(print());
 		result.andExpect(status().isOk());
@@ -86,7 +104,8 @@ public class MemberControllerTests {
 	@Test
 	public void testDeleteMember() throws Exception {
 		Member member = memberService.addMember(new MemberDto.Create("username", "password!", "email@email.com"));
-		ResultActions result = mockMvc.perform(delete("/member/" + member.getId()));
+		ResultActions result = mockMvc.perform(delete("/member/" + member.getId())
+				);
 		
 		result.andDo(print());
 		result.andExpect(status().isNoContent());
