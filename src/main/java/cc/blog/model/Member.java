@@ -23,19 +23,21 @@ import lombok.NoArgsConstructor;
 public class Member {
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
-	@Column(name="MEMBER_ID")
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Column(name = "MEMBER_ID")
 	private Long id;
-	
+
+	@Column(unique = true, length=100)
 	private String name;
-	
+
+	@Column(unique = true, length=500)
 	private String email;
-	
+
 	private String password;
-	
+
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date createdDate;
-	
+
 	@Enumerated(EnumType.STRING)
 	private MemberRoleType role;
 }
