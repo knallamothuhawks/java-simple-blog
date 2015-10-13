@@ -27,14 +27,13 @@ import org.springframework.web.context.WebApplicationContext;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import cc.blog.config.WebSecurityConfig;
 import cc.blog.model.Member;
 import cc.blog.model.MemberDto;
 import cc.blog.model.MemberRoleType;
 import cc.blog.service.MemberService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = {TestConfig.class, WebSecurityConfig.class})
+@SpringApplicationConfiguration(classes = {TestConfig.class})
 @WebAppConfiguration
 @Transactional
 public class MemberControllerTests {
