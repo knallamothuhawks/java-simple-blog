@@ -11,6 +11,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
@@ -21,32 +22,30 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
+@EnableJpaRepositories(basePackages = "cc.blog.repository")
 @SpringBootApplication
 public class SimplogApplication {
-	
-//	@Autowired
-//	private MemberService memberService;
-	
-    public static void main(String[] args) {
-        SpringApplication.run(SimplogApplication.class, args);
-    }
-    
-    /*@PostConstruct
-    public void saveDefaultMaster() {
-    	try {
-			memberService.findMemberById(1L);
-		} catch (MemberNotFoundException e) {
-			MemberDto.Create masterDto = new MemberDto.Create();
-			masterDto.setName("blogmaster");
-			masterDto.setEmail("blogmaster@email.com");
-			masterDto.setPassword("blogmaster");
-			masterDto.setRole(MemberRoleType.ADMIN);
-			memberService.addMember(masterDto);
-			System.out.println("Default master saved.");
-		}
-    }*/
-    
-    @Bean
+
+	// @Autowired
+	// private MemberService memberService;
+
+	public static void main(String[] args) {
+		SpringApplication.run(SimplogApplication.class, args);
+	}
+
+	/*
+	 * @PostConstruct public void saveDefaultMaster() { try {
+	 * memberService.findMemberById(1L); } catch (MemberNotFoundException e) {
+	 * MemberDto.Create masterDto = new MemberDto.Create();
+	 * masterDto.setName("blogmaster");
+	 * masterDto.setEmail("blogmaster@email.com");
+	 * masterDto.setPassword("blogmaster");
+	 * masterDto.setRole(MemberRoleType.ADMIN);
+	 * memberService.addMember(masterDto); System.out.println(
+	 * "Default master saved."); } }
+	 */
+
+	@Bean
 	public DataSource dataSource() throws Exception {
 		DriverManagerDataSource dataSource = new DriverManagerDataSource();
 		dataSource.setDriverClassName("org.h2.Driver");
@@ -67,7 +66,7 @@ public class SimplogApplication {
 	public PersistenceExceptionTranslationPostProcessor persistenceExceptionTranslationPostProcesso() {
 		return new PersistenceExceptionTranslationPostProcessor();
 	}
-    
+
 	@Bean
 	public HibernateJpaVendorAdapter hibernateJpaVendorAdapter() {
 		return new HibernateJpaVendorAdapter();
@@ -92,27 +91,27 @@ public class SimplogApplication {
 		entityManagerFactory.setJpaProperties(jpaProperties);
 		return entityManagerFactory;
 	}
-	
+
 	@Bean
 	public ModelMapper modelMapper() {
 		return new ModelMapper();
 	}
-	
+
 	@Bean
-    public HttpMessageConverter<String> responseBodyConverter() {
-        return new StringHttpMessageConverter(Charset.forName("UTF-8"));
-    }
- 
-    @Bean
-    public Filter characterEncodingFilter() {
-        CharacterEncodingFilter characterEncodingFilter = new CharacterEncodingFilter();
-        characterEncodingFilter.setEncoding("UTF-8");
-        characterEncodingFilter.setForceEncoding(true);
-        return characterEncodingFilter;
-    }
-    
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-    	return new BCryptPasswordEncoder();
-    }
+	public HttpMessageConverter<String> responseBodyConverter() {
+		return new StringHttpMessageConverter(Charset.forName("UTF-8"));
+	}
+
+	@Bean
+	public Filter characterEncodingFilter() {
+		CharacterEncodingFilter characterEncodingFilter = new CharacterEncodingFilter();
+		characterEncodingFilter.setEncoding("UTF-8");
+		characterEncodingFilter.setForceEncoding(true);
+		return characterEncodingFilter;
+	}
+
+	@Bean
+	public PasswordEncoder passwordEncoder() {
+		return new BCryptPasswordEncoder();
+	}
 }
