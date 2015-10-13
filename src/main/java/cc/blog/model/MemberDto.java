@@ -27,6 +27,8 @@ public class MemberDto {
 		@NotBlank
 		@Size(min = 3)
 		private String email;
+		
+		private MemberRoleType role;
 	}
 	
 	@Data

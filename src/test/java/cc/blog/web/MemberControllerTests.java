@@ -68,7 +68,7 @@ public class MemberControllerTests {
 
 	@Test
 	public void testCreateMember() throws Exception {
-		MemberDto.Create createDto = new MemberDto.Create("username", "password!", "email@email.com");
+		MemberDto.Create createDto = new MemberDto.Create("username", "password!", "email@email.com", MemberRoleType.GENERAL);
 
 		ResultActions result = mockMvc.perform(post("/member")
 				.with(httpBasic(memberCanAccess.getName(), memberCanAccess.getPassword()))
@@ -78,7 +78,7 @@ public class MemberControllerTests {
 		result.andDo(print());
 		result.andExpect(status().isCreated());
 		
-		MemberDto.Create brokenDto = new MemberDto.Create("user1", "p", "meil");
+		MemberDto.Create brokenDto = new MemberDto.Create("user1", "p", "meil", MemberRoleType.GENERAL);
 		result = mockMvc.perform(post("/member")
 				.with(httpBasic(memberCanAccess.getName(), memberCanAccess.getPassword()))
 				.contentType(MediaType.APPLICATION_JSON)
@@ -90,7 +90,7 @@ public class MemberControllerTests {
 	
 	@Test
 	public void tesgtFindMember() throws Exception {
-		Member member = memberService.addMember(new MemberDto.Create("username", "password!", "email@email.com"));
+		Member member = memberService.addMember(new MemberDto.Create("username", "password!", "email@email.com", MemberRoleType.GENERAL));
 		ResultActions result = mockMvc.perform(get("/member/" + member.getId())
 				.with(httpBasic(memberCanAccess.getName(), memberCanAccess.getPassword())));
 		
@@ -106,7 +106,7 @@ public class MemberControllerTests {
 	
 	@Test
 	public void testDeleteMember() throws Exception {
-		Member member = memberService.addMember(new MemberDto.Create("username", "password!", "email@email.com"));
+		Member member = memberService.addMember(new MemberDto.Create("username", "password!", "email@email.com", MemberRoleType.GENERAL));
 		ResultActions result = mockMvc.perform(delete("/member/" + member.getId())
 				.with(httpBasic(memberCanAccess.getName(), memberCanAccess.getPassword())));
 		
@@ -116,7 +116,7 @@ public class MemberControllerTests {
 	
 	@Test
 	public void testUpdateMember() throws Exception {
-		MemberDto.Create memberDto = new MemberDto.Create("username", "password!", "email@email.com");
+		MemberDto.Create memberDto = new MemberDto.Create("username", "password!", "email@email.com", MemberRoleType.GENERAL);
 		Member member = memberService.addMember(memberDto);
 		Member updateMember = new Member(member.getId(), "update-name", "update-mail@mail.com", "update-pass", null, MemberRoleType.ADMIN);
 		

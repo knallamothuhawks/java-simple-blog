@@ -23,10 +23,28 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 
 @SpringBootApplication
 public class SimplogApplication {
-
+	
+//	@Autowired
+//	private MemberService memberService;
+	
     public static void main(String[] args) {
         SpringApplication.run(SimplogApplication.class, args);
     }
+    
+    /*@PostConstruct
+    public void saveDefaultMaster() {
+    	try {
+			memberService.findMemberById(1L);
+		} catch (MemberNotFoundException e) {
+			MemberDto.Create masterDto = new MemberDto.Create();
+			masterDto.setName("blogmaster");
+			masterDto.setEmail("blogmaster@email.com");
+			masterDto.setPassword("blogmaster");
+			masterDto.setRole(MemberRoleType.ADMIN);
+			memberService.addMember(masterDto);
+			System.out.println("Default master saved.");
+		}
+    }*/
     
     @Bean
 	public DataSource dataSource() throws Exception {
