@@ -16,6 +16,7 @@ public class UserDetailsImpl extends User {
 
 	private static Collection<? extends GrantedAuthority> authorities(Member member) {
 		List<GrantedAuthority> authorities = new ArrayList<>();
+		authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
 		if (member.getRole() == MemberRoleType.ADMIN) {
 			authorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
 		}
