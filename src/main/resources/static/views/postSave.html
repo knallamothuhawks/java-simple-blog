@@ -1,0 +1,11 @@
+
+<div class="form-group" ng-conroller="postSaveController">
+	<label for="textTitle">Title:</label>
+	<input type="text" id="textTitle" class="form-control" placeholder="Title" aria-describedby="basic-addon2" ng-model="post.title">
+
+	<label for="textContent">Content:</label>
+	<textarea class="form-control" rows="10" id="textContent" placeholder="Content" ng-model="post.content"></textarea>
+	
+	<button type="button" id="btnWritePost" class="btn btn-primary margin-top-05" ng-click="writePost(post)">Save</button>
+	<button type="button" class="btn btn-default margin-top-05">Cancel</button>
+</div>

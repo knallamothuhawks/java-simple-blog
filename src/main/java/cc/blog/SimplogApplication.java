@@ -3,10 +3,12 @@ package cc.blog;
 import java.nio.charset.Charset;
 import java.util.Properties;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.Filter;
 import javax.sql.DataSource;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -19,14 +21,44 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
+import cc.blog.model.Member;
+import cc.blog.model.MemberDto;
+import cc.blog.model.MemberRoleType;
+import cc.blog.repository.MemberRepository;
+import cc.blog.service.MemberService;
+
 @SpringBootApplication
 public class SimplogApplication {
 
+	@Autowired
+	private MemberService memberService;
+	
+	@Autowired
+	private MemberRepository memberRepository;
+	
     public static void main(String[] args) {
         SpringApplication.run(SimplogApplication.class, args);
     }
     
-    @Bean
+    @PostConstruct
+    private void createDefaultAdminMember() {
+    	final String adminMemberName = "admin";
+		Member adminMember = memberRepository.findByName(adminMemberName);
+    	if (adminMember != null) {
+    		System.out.println("Already created admin member.");
+    		return;
+    	}
+    	
+    	MemberDto.Create createDto = new MemberDto.Create();
+		createDto.setName(adminMemberName);
+		createDto.setEmail("admin@eml.com");
+		createDto.setPassword(adminMemberName);
+		createDto.setRole(MemberRoleType.ADMIN);
+		memberService.addMember(createDto);
+		System.out.println("Created admin member.");
+	}
+
+	@Bean
 	public DataSource dataSource() throws Exception {
 		DriverManagerDataSource dataSource = new DriverManagerDataSource();
 		dataSource.setDriverClassName("org.h2.Driver");

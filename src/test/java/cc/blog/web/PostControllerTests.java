@@ -29,6 +29,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import cc.blog.model.Member;
 import cc.blog.model.MemberDto;
+import cc.blog.model.MemberRoleType;
 import cc.blog.model.Post;
 import cc.blog.model.PostDto;
 import cc.blog.service.MemberService;
@@ -117,7 +118,7 @@ public class PostControllerTests {
 	}
 	
 	private PostDto.Create getPostDto() {
-		MemberDto.Create memberDto = new MemberDto.Create("user1", "pass1", "email2@mail.com");
+		MemberDto.Create memberDto = new MemberDto.Create("user1", "pass1", "email2@mail.com", MemberRoleType.GENERAL);
 		Member member = memberService.addMember(memberDto);
 		Set<String> tags = new HashSet<String>();
 		tags.add("tag1");

@@ -53,7 +53,7 @@ public class MemberControllerTests {
 
 	@Test
 	public void testCreateMember() throws Exception {
-		MemberDto.Create createDto = new MemberDto.Create("username", "password!", "email@email.com");
+		MemberDto.Create createDto = new MemberDto.Create("username", "password!", "email@email.com", MemberRoleType.GENERAL);
 
 		ResultActions result = mockMvc.perform(post("/member").contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(createDto)));
@@ -61,7 +61,7 @@ public class MemberControllerTests {
 		result.andDo(print());
 		result.andExpect(status().isCreated());
 		
-		MemberDto.Create brokenDto = new MemberDto.Create("user1", "p", "meil");
+		MemberDto.Create brokenDto = new MemberDto.Create("user1", "p", "meil", MemberRoleType.GENERAL);
 		result = mockMvc.perform(post("/member").contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(brokenDto)));
 		
@@ -71,7 +71,7 @@ public class MemberControllerTests {
 	
 	@Test
 	public void testFindMember() throws Exception {
-		Member member = memberService.addMember(new MemberDto.Create("username", "password!", "email@email.com"));
+		Member member = memberService.addMember(new MemberDto.Create("username", "password!", "email@email.com", MemberRoleType.GENERAL));
 		ResultActions result = mockMvc.perform(get("/member/" + member.getId()));
 		
 		result.andDo(print());
@@ -85,7 +85,7 @@ public class MemberControllerTests {
 	
 	@Test
 	public void testDeleteMember() throws Exception {
-		Member member = memberService.addMember(new MemberDto.Create("username", "password!", "email@email.com"));
+		Member member = memberService.addMember(new MemberDto.Create("username", "password!", "email@email.com", MemberRoleType.GENERAL));
 		ResultActions result = mockMvc.perform(delete("/member/" + member.getId()));
 		
 		result.andDo(print());
@@ -94,7 +94,7 @@ public class MemberControllerTests {
 	
 	@Test
 	public void testUpdateMember() throws Exception {
-		Member member = memberService.addMember(new MemberDto.Create("username", "password!", "email@email.com"));
+		Member member = memberService.addMember(new MemberDto.Create("username", "password!", "email@email.com", MemberRoleType.GENERAL));
 		Member updateMember = new Member(member.getId(), "update-name", "update-mail@mail.com", "update-pass", null, MemberRoleType.ADMIN);
 		
 		ResultActions result = mockMvc.perform(put("/member")
