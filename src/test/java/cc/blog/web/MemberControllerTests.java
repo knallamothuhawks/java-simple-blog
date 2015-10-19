@@ -1,6 +1,7 @@
 package cc.blog.web;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -15,6 +16,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.http.MediaType;
+import org.springframework.security.web.FilterChainProxy;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
@@ -31,7 +33,7 @@ import cc.blog.model.MemberRoleType;
 import cc.blog.service.MemberService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = TestConfig.class)
+@SpringApplicationConfiguration(classes = {TestConfig.class})
 @WebAppConfiguration
 @Transactional
 public class MemberControllerTests {
@@ -43,26 +45,43 @@ public class MemberControllerTests {
 
 	@Autowired
 	MemberService memberService;
+	
+	@Autowired
+    private FilterChainProxy springSecurityFilterChain;
 
 	MockMvc mockMvc;
+	
+	private MemberDto.Create memberCanAccess;
 
 	@Before
 	public void setUp() {
-		mockMvc = MockMvcBuilders.webAppContextSetup(wac).build();
+		mockMvc = MockMvcBuilders.webAppContextSetup(wac)
+				.addFilter(springSecurityFilterChain)
+				.build();
+		
+		memberCanAccess = new MemberDto.Create();
+		memberCanAccess.setEmail("email@eml.com");
+		memberCanAccess.setName("uname");
+		memberCanAccess.setPassword("password1");
+		memberService.addMember(memberCanAccess);
 	}
 
 	@Test
 	public void testCreateMember() throws Exception {
-		MemberDto.Create createDto = new MemberDto.Create("username", "password!", "email@email.com");
+		MemberDto.Create createDto = new MemberDto.Create("username", "password!", "email@email.com", MemberRoleType.GENERAL);
 
-		ResultActions result = mockMvc.perform(post("/member").contentType(MediaType.APPLICATION_JSON)
+		ResultActions result = mockMvc.perform(post("/member")
+				.with(httpBasic(memberCanAccess.getName(), memberCanAccess.getPassword()))
+				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(createDto)));
 		
 		result.andDo(print());
 		result.andExpect(status().isCreated());
 		
-		MemberDto.Create brokenDto = new MemberDto.Create("user1", "p", "meil");
-		result = mockMvc.perform(post("/member").contentType(MediaType.APPLICATION_JSON)
+		MemberDto.Create brokenDto = new MemberDto.Create("user1", "p", "meil", MemberRoleType.GENERAL);
+		result = mockMvc.perform(post("/member")
+				.with(httpBasic(memberCanAccess.getName(), memberCanAccess.getPassword()))
+				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(brokenDto)));
 		
 		result.andDo(print());
@@ -70,14 +89,16 @@ public class MemberControllerTests {
 	}
 	
 	@Test
-	public void testFindMember() throws Exception {
-		Member member = memberService.addMember(new MemberDto.Create("username", "password!", "email@email.com"));
-		ResultActions result = mockMvc.perform(get("/member/" + member.getId()));
+	public void tesgtFindMember() throws Exception {
+		Member member = memberService.addMember(new MemberDto.Create("username", "password!", "email@email.com", MemberRoleType.GENERAL));
+		ResultActions result = mockMvc.perform(get("/member/" + member.getId())
+				.with(httpBasic(memberCanAccess.getName(), memberCanAccess.getPassword())));
 		
 		result.andDo(print());
 		result.andExpect(status().isOk());
 		
-		ResultActions errorResult = mockMvc.perform(get("/member/" + 0L));
+		ResultActions errorResult = mockMvc.perform(get("/member/" + 0L)
+				.with(httpBasic(memberCanAccess.getName(), memberCanAccess.getPassword())));
 		errorResult.andDo(print());
 		errorResult.andExpect(status().isBadRequest());
 		errorResult.andExpect(jsonPath("$.code", is("member.not.found.exception")));
@@ -85,8 +106,9 @@ public class MemberControllerTests {
 	
 	@Test
 	public void testDeleteMember() throws Exception {
-		Member member = memberService.addMember(new MemberDto.Create("username", "password!", "email@email.com"));
-		ResultActions result = mockMvc.perform(delete("/member/" + member.getId()));
+		Member member = memberService.addMember(new MemberDto.Create("username", "password!", "email@email.com", MemberRoleType.GENERAL));
+		ResultActions result = mockMvc.perform(delete("/member/" + member.getId())
+				.with(httpBasic(memberCanAccess.getName(), memberCanAccess.getPassword())));
 		
 		result.andDo(print());
 		result.andExpect(status().isNoContent());
@@ -94,10 +116,12 @@ public class MemberControllerTests {
 	
 	@Test
 	public void testUpdateMember() throws Exception {
-		Member member = memberService.addMember(new MemberDto.Create("username", "password!", "email@email.com"));
+		MemberDto.Create memberDto = new MemberDto.Create("username", "password!", "email@email.com", MemberRoleType.GENERAL);
+		Member member = memberService.addMember(memberDto);
 		Member updateMember = new Member(member.getId(), "update-name", "update-mail@mail.com", "update-pass", null, MemberRoleType.ADMIN);
 		
 		ResultActions result = mockMvc.perform(put("/member")
+				.with(httpBasic(memberDto.getName(), memberDto.getPassword()))
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(updateMember)));
 		
@@ -107,7 +131,8 @@ public class MemberControllerTests {
 	
 	@Test
 	public void testGetMemberPage() throws Exception {
-		ResultActions result = mockMvc.perform(get("/members"));
+		ResultActions result = mockMvc.perform(get("/members")
+				.with(httpBasic(memberCanAccess.getName(), memberCanAccess.getPassword())));
 		result.andDo(print());
 		result.andExpect(status().isOk());
 	}
