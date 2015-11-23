@@ -44,7 +44,7 @@ public class MemberController {
 		}
 
 		Member newMember = service.addMember(dto);
-		return new ResponseEntity<>(newMember, HttpStatus.CREATED);
+		return new ResponseEntity<>(modelMapper.map(newMember, MemberDto.Response.class), HttpStatus.CREATED);
 	}
 
 	@RequestMapping(value = "/member", method = RequestMethod.PUT)
@@ -55,8 +55,8 @@ public class MemberController {
 
 	@RequestMapping(value = "/member/{memberId}", method = RequestMethod.GET)
 	@ResponseStatus(HttpStatus.OK)
-	public Member viewMember(@PathVariable(value = "memberId") Long memberId) throws MemberNotFoundException {
-		return service.findMemberById(memberId);
+	public MemberDto.Response viewMember(@PathVariable(value = "memberId") Long memberId) throws MemberNotFoundException {
+		return modelMapper.map(service.findMemberById(memberId), MemberDto.Response.class);
 	}
 
 	@RequestMapping(value = "/member/{memberId}", method = RequestMethod.DELETE)

@@ -1,5 +1,6 @@
 package cc.blog.web;
 
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -9,6 +10,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.IntStream;
 
 import org.junit.Before;
@@ -17,6 +19,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.http.MediaType;
+import org.springframework.security.web.FilterChainProxy;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
@@ -53,17 +56,30 @@ public class PostControllerTests {
 	@Autowired
 	MemberService memberService;
 	
+	@Autowired
+    private FilterChainProxy springSecurityFilterChain;
+	
 	MockMvc mockMvc;
+	
+	private MemberDto.Create memberCanAccess;
 	
 	@Before
 	public void setUp() {
-		mockMvc = MockMvcBuilders.webAppContextSetup(wac).build();
+		mockMvc = MockMvcBuilders.webAppContextSetup(wac)
+				.addFilters(springSecurityFilterChain)
+				.build();
+		
+		memberCanAccess = new MemberDto.Create();
+		memberCanAccess.setEmail("email@eml.com");
+		memberCanAccess.setName("uname");
+		memberCanAccess.setPassword("password1");
+		memberService.addMember(memberCanAccess);
 	}
 
 	@Test
 	public void testCreatePost() throws Exception {
-		
 		ResultActions result = mockMvc.perform(post("/post")
+				.with(httpBasic(memberCanAccess.getName(), memberCanAccess.getPassword()))
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(getPostDto())));
 		
@@ -74,7 +90,8 @@ public class PostControllerTests {
 	@Test
 	public void testGetPost() throws Exception {
 		Post post = postService.addPost(getPostDto());
-		ResultActions result = mockMvc.perform(get("/post/" + post.getId()));
+		ResultActions result = mockMvc.perform(get("/post/" + post.getId())
+				.with(httpBasic(memberCanAccess.getName(), memberCanAccess.getPassword())));
 		result.andDo(print());
 		result.andExpect(status().isOk());
 	}
@@ -82,7 +99,8 @@ public class PostControllerTests {
 	@Test
 	public void testDeletePost() throws Exception {
 		Post post = postService.addPost(getPostDto());
-		ResultActions result = mockMvc.perform(delete("/post/" + post.getId()));
+		ResultActions result = mockMvc.perform(delete("/post/" + post.getId())
+				.with(httpBasic(memberCanAccess.getName(), memberCanAccess.getPassword())));
 		result.andDo(print());
 		result.andExpect(status().isNoContent());
 	}
@@ -96,6 +114,7 @@ public class PostControllerTests {
 		PostDto.Update dto = new PostDto.Update(oldPost.getId(), "update-title", "update-content", newTag);
 		
 		ResultActions result = mockMvc.perform(put("/post")
+				.with(httpBasic(memberCanAccess.getName(), memberCanAccess.getPassword()))
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(dto)));
 		
@@ -112,13 +131,14 @@ public class PostControllerTests {
 				e.printStackTrace();
 			}
 		});
-		ResultActions result = mockMvc.perform(get("/posts"));
+		ResultActions result = mockMvc.perform(get("/posts")
+				.with(httpBasic(memberCanAccess.getName(), memberCanAccess.getPassword())));
 		result.andDo(print());
 		result.andExpect(status().isOk());
 	}
 	
 	private PostDto.Create getPostDto() {
-		MemberDto.Create memberDto = new MemberDto.Create("user1", "pass1", "email2@mail.com", MemberRoleType.GENERAL);
+		MemberDto.Create memberDto = new MemberDto.Create("user_" + UUID.randomUUID(), "pass1",  UUID.randomUUID() + "@mail.com", MemberRoleType.GENERAL);
 		Member member = memberService.addMember(memberDto);
 		Set<String> tags = new HashSet<String>();
 		tags.add("tag1");
