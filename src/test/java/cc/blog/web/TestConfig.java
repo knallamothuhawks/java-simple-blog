@@ -15,7 +15,7 @@ public class TestConfig {
 
 	@Bean
 	public ModelMapper modelMapper() {
-		return new ModelMapper();
+		return null;//return new ModelMapper();
 	}
 	
 	@Bean
