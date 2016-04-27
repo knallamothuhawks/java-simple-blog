@@ -131,7 +131,7 @@ public class PostControllerTests {
 				e.printStackTrace();
 			}
 		});
-		ResultActions result = mockMvc.perform(get("/posts")
+		ResultActions result = mockMvc.perform(get("/poxsts")
 				.with(httpBasic(memberCanAccess.getName(), memberCanAccess.getPassword())));
 		result.andDo(print());
 		result.andExpect(status().isOk());
