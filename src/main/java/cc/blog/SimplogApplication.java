@@ -27,7 +27,7 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 @EnableJpaRepositories(basePackages = "cc.blog.repository")
 @SpringBootApplication
 public class SimplogApplication {
-
+	// dummy comment for jenkins test
 	// @Autowired
 	// private MemberService memberService;
 
